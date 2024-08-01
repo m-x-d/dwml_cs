@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<m:oMath xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+	<m:d>
+		<m:dPr>
+			<m:begChr m:val="["/>
+			<m:endChr m:val="]"/>
+			<m:ctrlPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Cambria Math" w:eastAsia="Times New Roman" w:hAnsi="Cambria Math" w:cs="Times New Roman"/>
+					<w:i/>
+					<w:sz w:val="24"/>
+					<w:szCs w:val="24"/>
+				</w:rPr>
+			</m:ctrlPr>
+		</m:dPr>
+		<m:e>
+			<m:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Cambria Math" w:eastAsia="Times New Roman" w:hAnsi="Cambria Math" w:cs="Times New Roman"/>
+					<w:sz w:val="24"/>
+					<w:szCs w:val="24"/>
+					<w:lang w:val="en-US"/>
+				</w:rPr>
+				<m:t>a</m:t>
+			</m:r>
+			<m:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Cambria Math" w:eastAsia="Times New Roman" w:hAnsi="Cambria Math" w:cs="Times New Roman"/>
+					<w:sz w:val="24"/>
+					<w:szCs w:val="24"/>
+				</w:rPr>
+				<m:t>;</m:t>
+			</m:r>
+			<m:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Cambria Math" w:eastAsia="Times New Roman" w:hAnsi="Cambria Math" w:cs="Times New Roman"/>
+					<w:sz w:val="24"/>
+					<w:szCs w:val="24"/>
+					<w:lang w:val="en-US"/>
+				</w:rPr>
+				<m:t>b</m:t>
+			</m:r>
+		</m:e>
+	</m:d>
+</m:oMath>
