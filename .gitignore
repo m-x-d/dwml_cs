@@ -1,0 +1,8 @@
+/.vs
+/dwml_cs/.vs
+/dwml_cs/bin
+/dwml_cs/obj
+/test_app/.vs
+/test_app/bin
+/test_app/obj
+*.user
