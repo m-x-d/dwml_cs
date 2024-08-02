@@ -75,6 +75,9 @@ namespace mxd.Dwml
 			{ "\u2210", "\\coprod" },
 			{ "\u2211", "\\sum" },
 			{ "\u222b", "\\int" },
+			{ "\u222c", "\\iint" },		//mxd. Double integral
+			{ "\u222d", "\\iiint" },	//mxd. Triple integral
+			{ "\u222e", "\\oint" },		//mxd. Contour integral
 			{ "\u22c0", "\\bigwedge" },
 			{ "\u22c1", "\\bigvee" },
 			{ "\u22c2", "\\bigcap" },
@@ -87,7 +90,7 @@ namespace mxd.Dwml
 		// Mapping of various symbols and Greek letters to LaTeX commands
 		protected static readonly Dictionary<string, string> T = new Dictionary<string, string>
 		{
-			// Greek letters
+			// Greek lowercase letters
 			{ "\U0001d6fc", "\\alpha " },
 			{ "\U0001d6fd", "\\beta " },
 			{ "\U0001d6fe", "\\gamma " },
@@ -150,6 +153,37 @@ namespace mxd.Dwml
 
 			//mxd. Prime
 			{ "\u0027", "\\prime " },
+			
+			//mxd. Moodle math operators
+			{ "\u22c5", "\\cdot " },
+			{ "\u00d7", "\\times " },
+			{ "\u002a", "\\ast " },
+			{ "\u00f7", "\\div " },
+			{ "\u22c4", "\\diamond " },
+			{ "\u2295", "\\oplus " },
+			{ "\u2296", "\\ominus " },
+			{ "\u2297", "\\otimes " },
+			{ "\u2298", "\\oslash " },
+			{ "\u2299", "\\odot " },
+			{ "\u2218", "\\circ " },
+			{ "\u2219", "\\bullet " },
+			{ "\u224d", "\\asymp " },
+			{ "\u2261", "\\equiv " },
+			{ "\u2286", "\\subseteq " },
+			{ "\u2287", "\\supseteq " },
+			{ "\u2aaf", "\\preceq " },
+			{ "\u2ab0", "\\succeq " },
+			{ "\u227c", "\\preccurlyeq " },
+			{ "\u227d", "\\succcurlyeq " },
+			{ "\u223c", "\\sim " },
+			{ "\u2243", "\\simeq " },
+			{ "\u2248", "\\approx " },
+			{ "\u2282", "\\subset " },
+			{ "\u2283", "\\supset " },
+			{ "\u227a", "\\prec " }, //mxd. Exported as '\prcue' from MSWord...
+			{ "\u227b", "\\succ " },
+			{ "\u2200", "\\forall " },
+			{ "\u2203", "\\exists " },
 
 			// Relation symbols
 			{ "\u2190", "\\leftarrow " },
@@ -166,7 +200,7 @@ namespace mxd.Dwml
 			{ "\u22ef", "\\cdots " },
 			{ "\u22f0", "\\adots " },
 			{ "\u22f1", "\\ddots " },
-			{ "\u2260", "\\ne " },
+			{ "\u2260", "\\ne " },	//mxd. Called '\neq' in Moodle
 			{ "\u2264", "\\leq " },
 			{ "\u2265", "\\geq " },
 			{ "\u2266", "\\leqq " },
@@ -179,6 +213,18 @@ namespace mxd.Dwml
 			{ "\u2209", "\\notin " },
 			{ "\u220b", "\\ni " },
 			{ "\u220c", "\\nni " },
+
+			//mxd. Double arrows
+			{ "\u21d0", "\\Leftarrow " },
+			{ "\u21d1", "\\Uparrow " },
+			{ "\u21d2", "\\Rightarrow " },
+			{ "\u21d3", "\\Downarrow " },
+			{ "\u21d4", "\\Leftrightarrow " },
+
+			//mxd. Long double arrows
+			{ "\u27f8", "\\Longleftarrow " },
+			{ "\u27f9", "\\Longrightarrow " },
+			{ "\u27fa", "\\Longleftrightarrow " },
 
 			// Ordinary symbols
 			{ "\u221e", "\\infty " },

@@ -52,15 +52,19 @@ namespace mxd.Dwml
 
 		protected Dictionary<string, TeXNode> ProcessChildrenDict(XmlNode elm, HashSet<string> include = null)
 		{
-			var latexChars = new Dictionary<string, TeXNode>();
+			var latex_chars = new Dictionary<string, TeXNode>();
 			
 			foreach (var info in ProcessChildrenList(elm, include))
-				latexChars[info.Tag] = info.Node;
+				latex_chars[info.Tag] = info.Node;
 
-			return latexChars;
+			return latex_chars;
 		}
 
-		protected string ProcessChildren(XmlNode elm, HashSet<string> include = null) => string.Join("", ProcessChildrenList(elm, include).Select(t => t.Node));
+		protected string ProcessChildren(XmlNode elm, HashSet<string> include = null)
+		{
+			var list = ProcessChildrenList(elm, include);
+			return (list.Count == 0 ? null : string.Join("", list.Select(t => t.Node)));
+		}
 
 		protected virtual TeXNode ProcessUnknown(XmlNode elm, string tag) => null;
 

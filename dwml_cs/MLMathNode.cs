@@ -22,7 +22,12 @@ namespace mxd.Dwml
 			if (oMathNode.Name != "m:oMath")
 				throw new InvalidDataException($"Expected 'oMath' node, but got '{oMathNode.LocalName}'!");
 
-			Text = ProcessChildren(oMathNode).Replace(" }", "}"); //mxd. Trim space before '}' to better match MSWord LaTeX output.
+			//mxd. Trim space before '}' and '\' (except explicit spaces) to better match MSWord LaTeX output.
+			Text = ProcessChildren(oMathNode)
+				.Replace(" }", "}")
+				.Replace("\\ \\", "[KEEP_VAL]")
+				.Replace(" \\", "\\")
+				.Replace("[KEEP_VAL]", "\\ \\");
 		}
 
 		protected override TeXNode ProcessTag(string tag, XmlNode elm)
@@ -102,13 +107,15 @@ namespace mxd.Dwml
 		// The Substript object
 		private TeXNode DoSub(XmlNode elm)
 		{
-			return new TeXNode(string.Format(SUB, ProcessChildren(elm)));
+			var val = ProcessChildren(elm);
+			return (val == null ? null : new TeXNode(string.Format(SUB, val)));
 		}
 
 		// The Superstript object
 		private TeXNode DoSup(XmlNode elm)
 		{
-			return new TeXNode(string.Format(SUP, ProcessChildren(elm)));
+			var val = ProcessChildren(elm);
+			return (val == null ? null : new TeXNode(string.Format(SUP, val)));
 		}
 
 		// The Fraction object
@@ -259,7 +266,12 @@ namespace mxd.Dwml
 				}
 			}
 
-			return new TeXNode(bo + string.Join("", res));
+			//mxd. Handle operators with empty <m:sub> / <m:sup> nodes (like '\sum x')
+			var val = string.Join("", res);
+			if (!val.StartsWith("_") && !val.StartsWith("^"))
+				bo += " ";
+
+			return new TeXNode(bo + val);
 		}
 
 		// Get text from 'r' element and try convert them to latex symbols
@@ -270,12 +282,19 @@ namespace mxd.Dwml
 			if (t == null)
 				return null;
 
+			//mxd
+			bool keep_spaces = (t.GetAttributeValue("xml:space") == "preserve");
+
 			//mxd. We need to iterate UTF-8 chars...
 			var char_enumerator = StringInfo.GetTextElementEnumerator(t.InnerText);
 			while (char_enumerator.MoveNext())
 			{
 				var s = char_enumerator.GetTextElement();
-				sb.Append(T.ContainsKey(s) ? T[s] : s);
+
+				if (keep_spaces && s == " ")
+					sb.Append("\\ ");
+				else
+					sb.Append(T.ContainsKey(s) ? T[s] : s);
 			}
 
 			return new TeXNode(EscapeLatex(sb.ToString()));
