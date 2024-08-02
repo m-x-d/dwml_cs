@@ -19,71 +19,11 @@ namespace mxd.Dwml
 		public MLMathNode(XmlNode oMathNode)
 		{
 			//mxd. Sanity check...
-			if (oMathNode.LocalName != "oMath")
+			if (oMathNode.Name != "m:oMath")
 				throw new InvalidDataException($"Expected 'oMath' node, but got '{oMathNode.LocalName}'!");
 
-			Text = FixDoubleBraces(ProcessChildren(oMathNode)).Replace(" }", "}");
+			Text = ProcessChildren(oMathNode).Replace(" }", "}"); //mxd. Trim space before '}' to better match MSWord LaTeX output.
 		}
-
-		//mxd. Because C# doesn't support named string.Format args and I'm too lazy to write a custom string.Format implementation...
-		// {{a}} -> {a}
-		// {{a}{b}} -> keep as is
-		// PYTHON string.format: {template}		-> value
-		// PYTHON string.format: {{template}}	-> {template} !!!
-		// PYTHON string.format: {{{template}}}	-> {value}
-		private static string FixDoubleBraces(string s)
-		{
-			int search_start = 0;
-
-			while (true)
-			{
-				int start = s.IndexOf("{{", search_start, StringComparison.OrdinalIgnoreCase);
-				if (start == -1) 
-					break;
-
-				int next_start = start + 1;
-				int end;
-				int level = 0;
-				while (true)
-				{
-					int next = s.IndexOf('{', next_start + 1);
-
-					end = s.IndexOf('}', next_start + 1);
-					if (end == -1 || end == s.Length - 1)
-						return s;
-
-					if (next != -1 && next < end)
-					{
-						level++;
-						next_start = end + 1;
-
-						continue;
-					}
-
-					level--;
-
-					if (level < 1)
-						break;
-				}
-
-				if (s[end + 1] != '}')
-				{
-					search_start = end + 2;
-					continue;
-				}
-
-				// Remove double braces...
-				s = s.Remove(end, 1);
-				s = s.Remove(start, 1);
-
-				// Move start position...
-				search_start = end - 2;
-			}
-
-			return s;
-		}
-
-		public override string ToString() => Text;
 
 		protected override TeXNode ProcessTag(string tag, XmlNode elm)
 		{
@@ -152,11 +92,11 @@ namespace mxd.Dwml
 			var beg_chr = GetValue(pr.GetAttributeValue("begChr"), D_DEFAULT["left"], T);
 			var end_chr = GetValue(pr.GetAttributeValue("endChr"), D_DEFAULT["right"], T);
 
-			var result = D.Replace("{left}",  string.IsNullOrEmpty(beg_chr) ? null_val : EscapeLatex(beg_chr))
-						  .Replace("{right}", string.IsNullOrEmpty(end_chr) ? null_val : EscapeLatex(end_chr))
-						  .Replace("{text}", children["e"].ToString());
+			var left =  string.IsNullOrEmpty(beg_chr) ? null_val : EscapeLatex(beg_chr);
+			var right = string.IsNullOrEmpty(end_chr) ? null_val : EscapeLatex(end_chr);
+			var text = children["e"].ToString();
 
-			return new TeXNode(pr + result);
+			return new TeXNode(pr + string.Format(D, left, text, right));
 		}
 
 		// The Substript object
@@ -176,12 +116,9 @@ namespace mxd.Dwml
 		{
 			var children = ProcessChildrenDict(elm);
 			var pr = children["fPr"];
-			var latex_str = GetValue(pr.GetAttributeValue("type"), F_DEFAULT, F);
+			var frac = GetValue(pr.GetAttributeValue("type"), F_DEFAULT, F);
 
-			string result = latex_str.Replace("{num}", children["num"].ToString())
-									 .Replace("{den}", children["den"].ToString());
-
-			return new TeXNode(pr + result);
+			return new TeXNode(pr + string.Format(frac, children["num"], children["den"]));
 		}
 
 		// The Function-Apply object (examples: sin cos)
@@ -223,29 +160,19 @@ namespace mxd.Dwml
 		{
 			var children = ProcessChildrenDict(elm);
 			var pr = children["groupChrPr"];
-			var latex_str = GetValue(pr.GetAttributeValue("chr"));
+			var chr = GetValue(pr.GetAttributeValue("chr"));
 
-			return new TeXNode(pr + string.Format(latex_str, children["e"]));
+			return new TeXNode(pr + string.Format(chr, children["e"]));
 		}
 
 		// The radical object
 		private TeXNode DoRad(XmlNode elm)
 		{
 			var children = ProcessChildrenDict(elm);
-			var text = children["e"].ToString();
-
-			string result;
 			if (children.ContainsKey("deg") && !string.IsNullOrEmpty(children["deg"].ToString()))
-			{
-				var deg = children["deg"].ToString();
-				result = RAD.Replace("{deg}", deg).Replace("{text}", text);
-			}
-			else
-			{
-				result = RAD_DEFAULT.Replace("{text}", text);
-			}
-			
-			return new TeXNode(result);
+				return new TeXNode(string.Format(RAD, children["deg"], children["e"]));
+
+			return new TeXNode(string.Format(RAD_DEFAULT, children["e"]));
 		}
 
 		// The Array object
@@ -253,9 +180,8 @@ namespace mxd.Dwml
 		{
 			var include = new HashSet<string> { "e" };
 			var text = string.Join(BRK, ProcessChildrenList(elm, include).Select(t => t.Node));
-			var result = ARR.Replace("{text}", text);
-			
-			return new TeXNode(result);
+
+			return new TeXNode(string.Format(ARR, text));
 		}
 
 		// The Lower-Limit object
@@ -263,13 +189,12 @@ namespace mxd.Dwml
 		{
 			var include = new HashSet<string> { "e", "lim" };
 			var children = ProcessChildrenDict(elm, include);
-			var latex_str = LIM_FUNC[children["e"].ToString()];
-			
-			if (string.IsNullOrEmpty(latex_str))
-				throw new NotSupportedException($"Not supported lim function: '{children["e"]}'!");
+			var func_name = children["e"].ToString();
 
-			var result = latex_str.Replace("{lim}", children["lim"].ToString());
-			return new TeXNode(result);
+			if (!LIM_FUNC.ContainsKey(func_name))
+				throw new NotSupportedException($"Not supported lim function: '{func_name}'!");
+
+			return new TeXNode(string.Format(LIM_FUNC[func_name], children["lim"]));
 		}
 
 		// The Upper-Limit object
@@ -278,10 +203,7 @@ namespace mxd.Dwml
 			var include = new HashSet<string> { "e", "lim" };
 			var children = ProcessChildrenDict(elm, include);
 
-			var result = LIM_UPP.Replace("{lim}", children["lim"].ToString())
-									  .Replace("{text}", children["e"].ToString());
-
-			return new TeXNode(result);
+			return new TeXNode(string.Format(LIM_UPP, children["lim"], children["e"]));
 		}
 
 		// The lower limit of the limLow object and the upper limit of the limUpp function
@@ -299,8 +221,7 @@ namespace mxd.Dwml
 				if (info.Tag == "mr")
 					rows.Add(info.Node.ToString());
 
-			var result = M.Replace("{text}", string.Join(BRK, rows));
-			return new TeXNode(result);
+			return new TeXNode(string.Format(M, string.Join(BRK, rows)));
 		}
 
 		// A single row of the matrix m
@@ -328,7 +249,7 @@ namespace mxd.Dwml
 					if (bo == null)
 						bo = "\\int";
 				}
-				else if (info.Tag == "e") //mxd. Wrap equation in {}...
+				else if (info.Tag == "e" && IsComplexEquation(info.Node.ToString())) //mxd. Wrap equation in {} to better match MSWord LaTeX output. 
 				{
 					res.Add($"{{{info.Node}}}");
 				}
@@ -345,7 +266,7 @@ namespace mxd.Dwml
 		private TeXNode DoR(XmlNode elm)
 		{
 			var sb = new StringBuilder();
-			var t = elm.GetChildByLocalName("t");
+			var t = elm.GetChildByName("m:t");
 			if (t == null)
 				return null;
 
@@ -388,6 +309,12 @@ namespace mxd.Dwml
 				store = CHR;
 			
 			return store.ContainsKey(key) ? store[key] : key;
+		}
+
+		// Return true when equation needs to be wrapped in {}.
+		private static bool IsComplexEquation(string e)
+		{
+			return e.Length > 2 && (e.Contains("+") || e.Contains("-") || e.Contains("\\"));
 		}
 
 	}

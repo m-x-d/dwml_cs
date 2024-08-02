@@ -51,7 +51,7 @@ namespace mxd.Dwml
 		{
 			if (val_tags.Contains(elm.LocalName))
 			{
-				var val = elm.GetAttributeValue("val");
+				var val = elm.GetAttributeValue("m:val");
 				inner_dict[elm.LocalName] = (val != null ? new TeXNode(val) : null);
 			}
 

@@ -263,6 +263,7 @@ namespace mxd.Dwml
 
 		protected const string FUNC_PLACE = "{fe}";
 		protected const string BRK = "\\\\";
+
 		protected static readonly Dictionary<string, string> CHR_DEFAULT = new Dictionary<string, string>
 		{
 			{ "ACC_VAL", "\\hat{{{0}}}" },
@@ -285,15 +286,15 @@ namespace mxd.Dwml
 		// Mapping of fraction types to their LaTeX representations
 		protected static readonly Dictionary<string, string> F = new Dictionary<string, string>
 		{
-			{ "bar", "\\frac{{{num}}}{{{den}}}" },
-			{ "skw", "^{{{num}}}/_{{{den}}}" },
-			{ "noBar", "\\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}" },
-			{ "lin", "{{{num}}}/{{{den}}}" },
+			{ "bar", "\\frac{{{0}}}{{{1}}}" },
+			{ "skw", "^{{{0}}}/_{{{1}}}" },
+			{ "noBar", "\\genfrac{{}}{{}}{{0pt}}{{}}{{{0}}}{{{1}}}" },
+			{ "lin", "{{{0}}}/{{{1}}}" },
 		};
 
-		protected const string F_DEFAULT = "\\frac{{{num}}}{{{den}}}";
+		protected const string F_DEFAULT = "\\frac{{{0}}}{{{1}}}";
 
-		protected const string D = "\\left{left}{text}\\right{right}";
+		protected const string D = "\\left{0}{1}\\right{2}";
 		protected static readonly Dictionary<string, string> D_DEFAULT = new Dictionary<string, string>
 		{
 			{ "left", "(" },
@@ -301,21 +302,21 @@ namespace mxd.Dwml
 			{ "null", "." },
 		};
 
-		protected const string RAD = "\\sqrt[{deg}]{{{text}}}";
-		protected const string RAD_DEFAULT = "\\sqrt{{{text}}}";
+		protected const string RAD = "\\sqrt[{0}]{{{1}}}";
+		protected const string RAD_DEFAULT = "\\sqrt{{{0}}}";
 
-		protected const string ARR = "\\begin{{array}}{{c}}{text}\\end{{array}}";
+		protected const string ARR = "\\begin{{array}}{{c}}{0}\\end{{array}}";
 
 		// Mapping of limit functions to their LaTeX representations
 		protected static readonly Dictionary<string, string> LIM_FUNC = new Dictionary<string, string>
 		{
-			{ "lim", "\\lim_{{{lim}}}" },
-			{ "max", "\\max_{{{lim}}}" },
-			{ "min", "\\min_{{{lim}}}" },
+			{ "lim", "\\lim_{{{0}}}" },
+			{ "max", "\\max_{{{0}}}" },
+			{ "min", "\\min_{{{0}}}" },
 		};
 
 		protected static readonly string[] LIM_TO = { "\\rightarrow", "\\to" };
-		protected const string LIM_UPP = "\\overset{{{lim}}}{{{text}}}";
-		protected const string M = "\\begin{{matrix}}{text}\\end{{matrix}}";
+		protected const string LIM_UPP = "\\overset{{{0}}}{{{1}}}";
+		protected const string M = "\\begin{{matrix}}{0}\\end{{matrix}}";
 	}
 }
